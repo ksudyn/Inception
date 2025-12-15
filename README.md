@@ -41,8 +41,6 @@ El objetivo de este proyecto es desplegar una infraestructura completa de servic
 |           |-- adminer
 |           `-- cadvisor
 
----
-
 ## Makefile
 
 ### ¿Qué es?
