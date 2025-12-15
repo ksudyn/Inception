@@ -40,6 +40,7 @@ El objetivo de este proyecto es desplegar una infraestructura completa de servic
 |           |-- static_website
 |           |-- adminer
 |           `-- cadvisor
+```
 
 ## Makefile
 
