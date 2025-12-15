@@ -6,23 +6,26 @@ El objetivo de este proyecto es desplegar una infraestructura completa de servic
 
 ### Obligatorios
 
-* << NGINX >> -> Reverse proxy HTTPS (TLSv1.2 / TLSv1.3)
-* << WordPress >> -> PHP-FPM
-* << MariaDB >> -> Base de datos
+* << NGINX >>  => Reverse proxy HTTPS (TLSv1.2 / TLSv1.3)
+* << WordPress >>  => PHP-FPM
+* << MariaDB >>  => Base de datos
+
+---
 
 ### Bonus
 
-* << Redis >> -> Caché de objetos para WordPress
-* << FTP >> -> Subida de archivos al volumen de WordPress
-* << Adminer >> -> Gestión visual de MariaDB
-* << Static Website >> -> Web estática independiente
-* << cAdvisor >> -> Monitorización de contenedores
+* << Redis >>  => Caché de objetos para WordPress
+* << FTP >>  => Subida de archivos al volumen de WordPress
+* << Adminer >>  => Gestión visual de MariaDB
+* << Static Website >> => Web estática independiente
+* << cAdvisor >>  => Monitorización de contenedores
 
 ---
 
 ## Estructura del proyecto
 
---- README.md
+```text
+|-- README.md
 |-- Makefile
 |-- secrets
 |-- srcs
@@ -77,9 +80,9 @@ Archivo que define comandos personalizados para gestionar todo el proyecto de fo
 
 ## secrets
 
-Carpeta que contiene << información sensible >>.
+Carpeta que contiene las contraseñas que se requieren en el proyecto .
 
- # Nunca se sube a Git.
+# Nunca se sube a Git.
 
 Ejemplos de archivos:
 
@@ -163,7 +166,7 @@ NGINX se ejecuta en primer plano para mantener el contenedor activo.
 
 ---
 
-## 📝 WordPress
+## WordPress
 
 Ejecutado con **PHP-FPM**, sin servidor web integrado.
 
@@ -184,7 +187,7 @@ WordPress espera a que MariaDB esté disponible antes de instalarse.
 
 ---
 
-## ⭐ Bonus
+## Bonus
 
 ### Redis
 
