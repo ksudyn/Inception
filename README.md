@@ -1,24 +1,24 @@
 Inception
 
-El objetivo de este proyecto es desplegar una infraestructura completa de servicios web utilizando << Docker >> y << Docker Compose >>, respetando estrictamente las reglas del subject: aislamiento de servicios, uso de imágenes propias, seguridad mediante secrets y persistencia de datos mediante volúmenes.
+El objetivo de este proyecto es desplegar una infraestructura completa de servicios web utilizando ` Docker ` y ` Docker Compose `, respetando estrictamente las reglas del subject: aislamiento de servicios, uso de imágenes propias, seguridad mediante secrets y persistencia de datos mediante volúmenes.
 
 ## Servicios incluidos
 
 ### Obligatorios
 
-* << NGINX >>  => Reverse proxy HTTPS (TLSv1.2 / TLSv1.3)
-* << WordPress >>  => PHP-FPM
-* << MariaDB >>  => Base de datos
+* << NGINX >>       => Reverse proxy HTTPS (TLSv1.2 / TLSv1.3)
+* << WordPress >>   => PHP-FPM
+* << MariaDB >>     => Base de datos
 
 ---
 
 ### Bonus
 
-* << Redis >>  => Caché de objetos para WordPress
-* << FTP >>  => Subida de archivos al volumen de WordPress
-* << Adminer >>  => Gestión visual de MariaDB
-* << Static Website >> => Web estática independiente
-* << cAdvisor >>  => Monitorización de contenedores
+* << Redis >>           => Caché de objetos para WordPress
+* << FTP >>             => Subida de archivos al volumen de WordPress
+* << Adminer >>         => Gestión visual de MariaDB
+* << Static Website >>  => Web estática independiente
+* << cAdvisor >>        => Monitorización de contenedores
 
 ---
 
@@ -111,8 +111,7 @@ Define:
 
 Permite levantar toda la infraestructura con:
 
-```
-    - bash -
+```bash
  << make up >>
 ```
 
@@ -429,8 +428,7 @@ Garantiza persistencia incluso tras reiniciar contenedores.
 
 ## 🚀 Uso rápido
 
-```
-    - bash -
+```bash
  << make up >>
 ```
 
