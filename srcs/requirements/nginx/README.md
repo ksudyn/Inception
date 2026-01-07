@@ -1,7 +1,7 @@
 ## NGINX (Parte Obligatoria)
 
 Servicio encargado de actuar como **servidor web** y **reverse proxy** del proyecto.  
-Es el **único contenedor expuesto al exterior**, cumpliendo estrictamente el subject de Inception.
+Es el **único contenedor expuesto al exterior**.
 
 NGINX se encarga de:  
 - Gestionar conexiones **HTTPS**.  

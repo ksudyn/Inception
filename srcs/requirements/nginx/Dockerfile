@@ -41,7 +41,6 @@ HEALTHCHECK --interval=10s --timeout=5s --start-period=20s --retries=3 \
   CMD curl -k -f https://localhost/healthz || exit 1
 
 
-
 # Define la imagen base y los paquetes necesarios.
 # Copia configuraciones y scripts.
 # Da permisos de ejecución a los scripts.

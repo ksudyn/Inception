@@ -264,7 +264,17 @@ exec mysqld
 
 ---
 
-## Resumen para defensa
+## Resumen
+
+* Si nunca has trabajado con Docker ni Inception:
+* MariaDB es solo un contenedor, no un servicio instalado en tu máquina.
+* Todo se configura automáticamente usando Dockerfile y entrypoint.
+* No hay contraseñas en el código; se usan Docker secrets.
+* Los datos se guardan fuera del contenedor, en un volumen persistente.
+* WordPress se conecta a MariaDB a través de la red interna de Docker, no por Internet.
+* El contenedor arranca y funciona de forma independiente, cumpliendo las normas de Inception.
+
+## Para defensa
 
 * MariaDB corre en su propio contenedor
 * Usa Debian Bullseye
@@ -272,5 +282,3 @@ exec mysqld
 * Los datos son persistentes
 * La inicialización ocurre solo una vez
 * WordPress se conecta por red interna Docker
-
-✔ Cumple completamente el subject de Inception
