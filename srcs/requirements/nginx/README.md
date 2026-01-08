@@ -44,10 +44,11 @@ srcs/requirements/nginx/
 
 * **Dockerfile**
 
-  * Imagen basada en **Debian Bullseye** (penúltima versión estable).  
-  * Instala únicamente:
+  * Imagen basada en **Debian Bullseye** (penúltima versión estable).
+  * No usar imágenes oficiales de NGINX.
+  * Instalar solo paquetes necesarios para servidor web y TLS:
     * `nginx`  
-    * `openssl` (para certificados TLS)  
+    * `openssl` 
   * Copia archivos de configuración personalizados.  
   * Copia el script de generación de certificados.  
   * Usa un `ENTRYPOINT` para inicializar certificados y arrancar NGINX.  
@@ -55,21 +56,41 @@ srcs/requirements/nginx/
 
 * **default.conf.template**
 
-  * Archivo de configuración principal del servidor virtual.  
-  * Utiliza variables de entorno (ej. `DOMAIN_NAME`) que se sustituyen en tiempo de ejecución.  
+  * Archivo de configuración del virtual host de NGINX para WordPress.
+  * Este archivo define **cómo debe responder NGINX a cada tipo de petición HTTP/HTTPS** que recibe desde el exterior.
+  * Utiliza variables de entorno (ej. `DOMAIN_NAME`) que se sustituyen en tiempo de ejecución.
+  * Permitiendo que la misma imagen sea reutilizable en distintos entornos sin modificar el código
   * Define:
     * Puerto **443** con HTTPS.  
-    * Certificados TLS.  
-    * Redirección de peticiones PHP hacia WordPress.  
+    * Certificados TLS, desde Docker secrets, evitando incluir claves privadas en el repositorio.
+    * Redirección de peticiones PHP hacia WordPress.
+    * Configura el uso obligatorio de **TLS v1.2 y TLS v1.3**.
   * Ejemplo de responsabilidades:
-    * `root /var/www/html;`  
-    * `index index.php index.html;`  
-    * Bloque `location ~ \.php$` con FastCGI hacia WordPress.  
-    * Protección frente a acceso directo a archivos sensibles.
+    * `root /var/www/html;`
+      Indica el directorio desde el que NGINX sirve los archivos web.
+    * `index index.php index.html;`
+      Define los archivos por defecto cuando se accede a un directorio.
+    * `location / { ... }`  
+    Gestiona el enrutamiento principal de WordPress, redirigiendo las peticiones al
+    archivo `index.php` cuando el recurso solicitado no existe directamente.  
+    Este comportamiento es esencial para el funcionamiento interno de WordPress.
+
+  * `location ~ \.php$ { ... }`  
+    Redirige todas las peticiones a archivos PHP hacia el contenedor de WordPress
+    mediante **FastCGI**, utilizando PHP-FPM como motor de ejecución.
+    NGINX **no ejecuta PHP directamente**, cumpliendo la separación de responsabilidades.
+
+  * `location ~* \.(jpg|css|js|...)$ { ... }`  
+    Optimiza la entrega de archivos estáticos (imágenes, CSS, JavaScript), permitiendo
+    que el navegador los cachee y mejorando el rendimiento general del sitio.
+
+  * `location ~ /\. { deny all; }`  
+    Bloquea el acceso a archivos ocultos o sensibles (como `.env`, `.git`, etc.),
+    aumentando la seguridad del servidor. 
 
 * **nginx.conf**
 
-  * Configuración global de NGINX.  
+  * Configuración global de NGINX, controla el comportamiento general del servidor.
   * Define:
     * Usuario de ejecución (`www-data`).  
     * Número de workers automáticos.  

@@ -1,56 +1,114 @@
 server
 {
+    # Escucha conexiones HTTPS en IPv4
     listen 443 ssl;
+
+    # Escucha conexiones HTTPS en IPv6
     listen [::]:443 ssl;
+
+    # Nombre del dominio del servidor
+    # ${DOMAIN_NAME} se sustituye en tiempo de arranque por envsubst
     server_name ${DOMAIN_NAME};
 
-    # Certificados TLS (Docker secrets)
+    # Certificado TLS (SSL) cargado desde Docker secrets
+    # Garantiza que las claves no estén en el código
     ssl_certificate     /run/secrets/nginx_crt;
     ssl_certificate_key /run/secrets/nginx_key;
 
     # Protocolos TLS permitidos
+    # TLSv1.0 y TLSv1.1 están obsoletos e inseguros
     ssl_protocols TLSv1.2 TLSv1.3;
 
-    # Preferir cifrados del servidor
+    # El servidor decide qué cifrado usar, no el cliente
+    # Mejora la seguridad
     ssl_prefer_server_ciphers on;
 
-    # Solo cifrados fuertes
+    # Lista de cifrados permitidos:
+    # HIGH      -> solo cifrados fuertes
+    # !aNULL    -> no permite cifrados sin autenticación
+    # !MD5      -> MD5 es inseguro
     ssl_ciphers HIGH:!aNULL:!MD5;
 
-    # Cache de sesiones TLS (mejora rendimiento)
+    # Caché de sesiones TLS (mejora rendimiento)
+    # Evita renegociar TLS en cada petición
     ssl_session_cache shared:SSL:10m;
     ssl_session_timeout 10m;
 
+    # Directorio raíz donde están los archivos de WordPress
     root /var/www/html;
+
+    # Archivos índice por defecto
     index index.php index.html index.htm;
 
-    # WordPress routing
-    location / {
+    # Location define qué hacer con una petición según la URL solicitada
+
+    location /      # prefijo normal
+    {
+        # try_files prueba:
+        # El archivo exacto pedido
+        # Un directorio con ese nombre
+        # Redirige a index.php con los parámetros originales
+        #
+        # Esto es esencial para WordPress
         try_files $uri $uri/ /index.php$is_args$args;
     }
 
-    # Archivos estáticos (cacheados)
-    location ~* \.(jpg|jpeg|png|gif|ico|css|js|svg|woff2?)$ {
+
+    location ~* \.(jpg|jpeg|png|gif|ico|css|js|svg|woff2?)$     # regex (NO sensible a mayúsculas)
+    {
+        # ~* -> expresión regular sin distinguir mayúsculas/minúsculas
+        # \. -> el punto antes de la extensión
+        # (...) -> lista de extensiones permitidas
+        # $ -> final del nombre del archivo
+
+        # No registrar accesos para estos archivos
+        # Reduce logs y mejora rendimiento
         access_log off;
+
+        # Indica al navegador que puede cachear estos archivos 30 días
         expires 30d;
+
+        # Cabecera HTTP que indica que el contenido es público y cacheable
         add_header Cache-Control "public";
     }
 
-    # Healthcheck para Docker
-    location = /healthz {
+
+    location = /healthz     # coincidencia exacta
+    {
+        # Responde con código 200 y el texto "ok"
+        # Docker usa esto para comprobar que NGINX sigue vivo
         return 200 "ok\n";
+
+        # Tipo de contenido de la respuesta
         add_header Content-Type text/plain;
     }
 
-    # PHP-FPM (WordPress)
-    location ~ \.php$ {
+
+    location ~ \.php$       # regex (sensible a mayúsculas)
+    {
+        # Incluye variables FastCGI estándar
         include fastcgi.conf;
+
+        # Envía la petición al contenedor WordPress
+        # puerto 9000 (PHP-FPM)
         fastcgi_pass wordpress:9000;
+
+        # Archivo PHP por defecto
         fastcgi_index index.php;
     }
 
-    # Bloquear archivos ocultos
-    location ~ /\. {
+
+    location ~ /\.
+    {
+        # Bloquea acceso a archivos como:
+        # .env
+        # .git
+        # .htaccess
         deny all;
     }
 }
+
+
+#  En conjunto, este archivo define **cómo NGINX actúa como puerta de entrada segura
+#  al proyecto**, sirviendo contenido web, protegiendo el acceso y redirigiendo las
+#  peticiones PHP hacia WordPress de forma controlada y segura.
