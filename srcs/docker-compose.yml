@@ -1,0 +1,156 @@
+version: "3.8" # 3.8 es estable y compatible con Docker moderno
+
+# Definición de servicios
+# Cada servicio = 1 contenedor
+services:
+
+  # MariaDB (Base de datos)
+  mariadb:
+    # Construye la imagen desde esta ruta
+    # No se usan imágenes prehechas
+    build: ./requirements/mariadb
+
+    # Nombre fijo del contenedor
+    container_name: mariadb
+
+    # Reinicia el contenedor si se cae (excepto si se para manualmente)
+    restart: unless-stopped
+
+    # Archivo con variables de entorno NO sensibles
+    env_file:
+      - .env
+
+    # Docker secrets
+    secrets:
+      - db_root_password
+      - db_user_password
+
+    # Volumen persistente para la base de datos
+    # Aunque se borre el contenedor, los datos siguen
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+    # Red interna del proyecto
+    networks:
+      - inception
+
+    # Puerto expuesto SOLO a la red interna
+    # No accesible desde el host
+    expose:
+      - "3306"
+
+  # WordPress (PHP-FPM)
+  wordpress:
+    # Imagen propia construida desde Dockerfile
+    build: ./requirements/wordpress
+
+    container_name: wordpress
+
+    restart: unless-stopped
+
+    # WordPress depende de que MariaDB esté disponible
+    depends_on:
+      - mariadb
+
+    # Variables de entorno no sensibles
+    env_file:
+      - .env
+
+    # Secrets necesarios para conectar con MariaDB
+    # y crear el usuario admin de WordPress
+    secrets:
+      - db_user_password
+      - db_root_password
+      - wp_admin_password
+
+    # Volumen compartido con NGINX
+    # Contiene WordPress, uploads, plugins, temas, etc.
+    volumes:
+      - wordpress_data:/var/www/html
+
+    # Red interna
+    networks:
+      - inception
+
+    # Puerto de PHP-FPM
+    # SOLO accesible por NGINX
+    expose:
+      - "9000"
+
+  # NGINX (Servidor web)
+  nginx:
+    # Imagen propia con NGINX + TLS
+    build: ./requirements/nginx
+
+    container_name: nginx
+
+    restart: unless-stopped
+
+    # NGINX depende de WordPress (PHP-FPM)
+    depends_on:
+      - wordpress
+
+    # Variables de entorno (ej: DOMAIN_NAME)
+    env_file:
+      - .env
+
+    # Certificados TLS como Docker secrets
+    secrets:
+      - nginx_crt
+      - nginx_key
+
+    # Volumen compartido para servir WordPress
+    volumes:
+      - wordpress_data:/var/www/html
+
+    # Red interna
+    networks:
+      - inception
+
+    # ÚNICO puerto expuesto al exterior
+    # HTTPS obligatorio (subject)
+    ports:
+      - "443:443"
+
+# Volúmenes persistentes
+volumes:
+  # Datos de MariaDB
+  mariadb_data:
+    driver: local
+
+  # Archivos de WordPress
+  wordpress_data:
+    driver: local
+
+# ==========================
+# Red interna del proyecto
+# ==========================
+networks:
+  inception:
+    driver: bridge
+
+# ==========================
+# Docker secrets
+# Contraseñas y certificados
+# ==========================
+secrets:
+  # Contraseña root de MariaDB
+  db_root_password:
+    file: ./secrets/db_root_password.txt
+
+  # Contraseña del usuario de WordPress en la BD
+  db_user_password:
+    file: ./secrets/db_user_password.txt
+
+  # Contraseña del admin de WordPress
+  wp_admin_password:
+    file: ./secrets/wp_admin_password.txt
+
+  # Certificado TLS de NGINX
+  nginx_crt:
+    file: ./secrets/nginx.crt
+
+  # Clave privada TLS de NGINX
+  nginx_key:
+    file: ./secrets/nginx.key
+

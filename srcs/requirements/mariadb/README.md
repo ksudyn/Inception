@@ -282,3 +282,5 @@ exec mysqld
 * Los datos son persistentes
 * La inicialización ocurre solo una vez
 * WordPress se conecta por red interna Docker
+
+---

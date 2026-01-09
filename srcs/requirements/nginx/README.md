@@ -174,4 +174,4 @@ Esto permite:
 * Gestiona certificados mediante Docker secrets.  
 * Redirige PHP a WordPress mediante FastCGI.  
 
-✔ Cumple completamente el subject de Inception
+---
