@@ -1,4 +1,6 @@
 #!/bin/bash
+# Esto no es un comentario aunque empiece con #, es un shebang, todo lo que empieza con # (excepto #! en la primera línea) no se ejecuta,
+# le dice al sistema operativo qué programa usar para ejecutar el script, en este caso bash
 set -e # hace que el script termine si cualquier comando devuelve un error
 
 # Aseguro que los directorios existen y tienen los permisos correctos.
@@ -7,14 +9,17 @@ set -e # hace que el script termine si cualquier comando devuelve un error
 # 	-p 					-> crea los directorios padres si no existen
 # 	/var/lib/mysql 		-> directorio donde se almacenan los datos de mariadb
 # 	/run/mysqld 		-> directorio donde se almacenan los archivos de socket y PID de mariadb
-# chown -R mysql:mysql 	-> cambia el propietario y grupo del directorio a mysql
+# chown -R mysql:mysql 	-> cambia el propietario y grupo del directorio a mysql,
+#							el usuario que corre MariaDB es mysql, necesita ser dueño de los archivos.
 # 	-R 					-> recursivo
 # 	mysql:mysql 		-> propietario y grupo
+#	chmod 755 			-> permisos estándar de lectura y ejecución.
 mkdir -p /var/lib/mysql /run/mysqld && \
 chown -R mysql:mysql /var/lib/mysql /run/mysqld
 chmod 755 /var/lib/mysql /run/mysqld
 
 # Verificación de si la base de datos ya ha sido inicializada
+# ! -d significa que el directorio no existe( -f es archivo y -d es directorio, ! es no)
 # Si no existe el directorio /var/lib/mysql/mysql, significa que la base de datos
 # no ha sido inicializada, por lo que procedemos a inicializarla.
 # Si ya existe, significa que la base de datos ya ha sido inicializada,
@@ -51,6 +56,7 @@ echo "[+] Arrancando servidor temporal para configuración inicial..."
 mysqld &
 
 # esperar a que MariaDB esté listo
+# mysqladmin ping espera a que el servidor esté listo antes de seguir.
 until mysqladmin ping ; do
 	echo "Esperando a que MariaDB esté disponible..."
 	sleep 1
@@ -91,9 +97,31 @@ mysql -u root <<-EOSQL
 	FLUSH PRIVILEGES;
 EOSQL
 
+# mysql -u root
+# Ejecuta el cliente de MariaDB usando el usuario root.
+# Es como decirle: “Hola MariaDB, soy el administrador, déjame hacer cambios”.
+# <<-EOSQL ... EOSQL
+# Esto se llama HEREDOC.
+# Permite escribir varios comandos SQL dentro de un bloque, en lugar de escribirlos uno por uno manualmente.
+# Todo lo que está entre <<-EOSQL y EOSQL se envía al cliente de MariaDB para que lo ejecute.
+
+
 echo "[+] Deteniendo servidor temporal..."
 mysqladmin -uroot -p"${MDB_ROOT_PASS}" shutdown
 touch /var/lib/mysql/.mysql_initialized # Evita reinicializaciones en futuros arranques.
+
+# mysqladmin 			-> comando para administrar MariaDB desde la terminal.
+# -uroot 				-> con usuario root
+# -p"${MDB_ROOT_PASS}" 	-> usando la contraseña del root
+# shutdown 				-> le dice a MariaDB “apágate”.
+# Apaga el servidor temporal que arrancamos antes para poder crear la base de datos y usuarios.
+
+# touch /var/lib/mysql/.mysql_initialized
+# Crea un archivo vacío llamado .mysql_initialized dentro del volumen de MariaDB.
+# Sirve como marcador: “La base de datos ya fue configurada”.
+# Si reinicias el contenedor, el script no volverá a crear usuarios ni a modificar la DB.
+# Evita sobrescribir datos existentes en WordPress o MariaDB.
+
 
 echo "[+] Arrancando MariaDB normalmente..."
 exec mysqld # MariaDB se ejecuta en primer plano

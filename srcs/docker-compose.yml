@@ -4,7 +4,7 @@ version: "3.8" # 3.8 es estable y compatible con Docker moderno
 # Cada servicio = 1 contenedor
 services:
 
-  # MariaDB (Base de datos)
+  # MariaDB (Base de datos), guarda datos
   mariadb:
     # Construye la imagen desde esta ruta
     # No se usan imágenes prehechas
@@ -39,7 +39,7 @@ services:
     expose:
       - "3306"
 
-  # WordPress (PHP-FPM)
+  # WordPress (PHP-FPM), crea la web
   wordpress:
     # Imagen propia construida desde Dockerfile
     build: ./requirements/wordpress
@@ -77,7 +77,7 @@ services:
     expose:
       - "9000"
 
-  # NGINX (Servidor web)
+  # NGINX (Servidor web), muestra la web al mundo
   nginx:
     # Imagen propia con NGINX + TLS
     build: ./requirements/nginx
@@ -154,3 +154,23 @@ secrets:
   nginx_key:
     file: ./secrets/nginx.key
 
+
+# Se utiliza build porque Inception prohíbe imágenes preconstruidas
+# y es una herrameinta que siguiendo la ruta que se le da, busca el Dockerfile ahí dentro.
+# Sabe que tiene que buscar Dockerfile por que es una regla fija que tiene Docker.
+# build busca Dockerfile, al igual que make busca Makefile
+
+# Se utiliza restart para reiniciar el contenedor.
+# y unless-stopped es la regla interna de Docker que dice,
+# si el contenedor se detiene por un fallo, Docker lo reinicia automáticamente, 
+# o si el contenedor se detiene porque yo lo paro manualmente, Docker no lo reinicia
+
+# Se utiliza volumes para guardar todo lo que ejecuta y hace mariadb dentro de esta direccion
+# - mariadb_data:/var/lib/mysql,
+# para no perderlo y que los datos permanecen aunque el contenedor muera o se reinicie
+
+# Network es una red interna para que los diferentes contendeores se puedan comunicar entre si.
+# Cada uno con su respectivo expone o ports.
+# Donde expose es un puerto solo visible dentro de la red, para que otros contenedores lo usen
+# y ports es un puerto visible al mundo exterior, el usuario puede conectarse
+# Pero para eso todos tienen que tener el mismo networks

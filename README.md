@@ -1,6 +1,6 @@
 Inception
 
-El objetivo de este proyecto es desplegar una infraestructura completa de servicios web utilizando ` Docker ` y ` Docker Compose `, respetando estrictamente las reglas del subject: aislamiento de servicios, uso de imágenes propias, seguridad mediante secrets y persistencia de datos mediante volúmenes.
+El objetivo de este proyecto es desplegar una infraestructura completa de servicios web `Simular cómo funciona una página web REAL por dentro ` utilizando ` Docker ` y ` Docker Compose `, respetando estrictamente las reglas del subject: aislamiento de servicios, uso de imágenes propias, seguridad mediante secrets y persistencia de datos mediante volúmenes.
 
 ## Servicios incluidos
 
@@ -99,7 +99,9 @@ Los secretos se inyectan en los contenedores mediante << Docker secrets >>, cump
 
 ## docker-compose.yml
 
-Archivo central de orquestación.
+Archivo central de orquestación.  
+Es un archivo que le dice a Docker "Quiero varios contenerdore, que trabajen juntos, de esta forma".  
+No ejecuta programas por si mismo, solo ejecuta.
 
 Define:
 
@@ -382,6 +384,19 @@ Gracias a este volumen:
 - WordPress no expone ningún puerto al exterior.
 - El acceso externo se realiza únicamente a través de NGINX.
 
+---
+
+Para entender como funciona de forma sencilla
+
+Paso a paso funcionaria así:
+
+  * El usuario escribe la dirección   -> https://login.42.fr
+  * NGINX recibe la visita (es la puerta)
+  * WordPress decide qué mostrar
+  * MariaDB guarda textos, usuarios, contraseñas
+  * Se devuelve una página al usuario
+
+Todo eso NO es una sola cosa, son servicios diferentes.
 
 ---
 
