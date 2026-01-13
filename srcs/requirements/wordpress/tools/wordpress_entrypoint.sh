@@ -1,16 +1,17 @@
 #!/bin/bash
+# #!/bin/bash le dice al contenedor que use bash para ejecutar el script.
 set -e  # Detener el script si ocurre cualquier error, evita instalaciones a medias.
 
-# ----------------------------------------------------
-# Leer contraseñas desde Docker secrets
-# ----------------------------------------------------
+# En la variable WPDB_USER_PASS se guarda la contraseña WPDB_USER_PASSWORD_FILE
+# que contine la ruta del archivo con la contraseña y para eso se usando el cat
+# Lo mismo WPDB_ROOT_PASS y WP_ADMIN_PASS
 WPDB_USER_PASS=$(cat "${WPDB_USER_PASSWORD_FILE}")
 WPDB_ROOT_PASS=$(cat "${WPDB_ROOT_PASSWORD_FILE}")
 WP_ADMIN_PASS=$(cat "${WP_ADMIN_PASSWORD_FILE}")
 
-# ----------------------------------------------------
-# Esperar a que MariaDB esté disponible
-# ----------------------------------------------------
+
+
+
 wait_for_db()
 {
 	until mysqladmin ping \
