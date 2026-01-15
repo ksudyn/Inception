@@ -61,9 +61,19 @@ wait_for_db
 if [ ! -f /var/www/html/wp-config.php ]; then
 	echo "[+] Instalando WordPress..."
 # wp es un programa de línea de comandos para WordPress
+# Es una herramienta oficial de WordPress para controlarlo desde la terminal
 	wp core download --allow-root --path=/var/www/html
+# core es el nucleo de WordPress, dowland le dice que descargue WordPress.
+# --alow-root significa que se ejecute este comando como el usuario root asi puede hacer cualquier cosa sin restricciones
+# y --path=/var/www/html es donde se va a descaragra WordPress por que es el diretorio estandae de servidores web
 
-	# Pero para crear la base de datos de wordpress necesitamos el usuario root
+# confi create crea el archivo wp-config.php
+# con --allow-root se permite ejecutar el comando como usuario root que es necesario en Docker
+# --dbname es el nombre de la base de datos y WP_DATABASE debe coincidir con lo que se creo en MariaDB
+# --dbuser es el usuario de la base de datos ( NO root del sistema)
+# --dbpass es la contraseña del usuario
+# --dbhost es la direccion del servidor de base de datos
+# y todo esto se crea en la direccion --path=/var/www/html
 	echo "[+] Creando wp-config.php..."
 	wp config create --allow-root \
 		--dbname="$WP_DATABASE" \
@@ -72,6 +82,17 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 		--dbhost="$DB_HOSTNAME" \
 		--path=/var/www/html
 
+
+# wp core install realiza la instalación inicial de WordPress
+# es equivalente al instalador web que aparece la primera vez
+# --allow-root permite ejecutar el comando como root dentro del contenedor
+# --url define la URL oficial del sitio, debe coincidir con el dominio configurado en NGINX
+# --title es el nombre del sitio web
+# --admin_user crea el usuario administrador de WordPress
+# el nombre no puede contener "admin" según el subject
+# --admin_password define la contraseña del administrador
+# --admin_email define el correo del administrador (WordPress lo exige)
+# --path indica dónde está instalada la web
 	echo "[+] Instalando WordPress..."
 	wp core install --allow-root \
 		--url="https://${DOMAIN_NAME}" \
@@ -81,7 +102,17 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 		--admin_email="$WP_ADMIN_EMAIL" \
 		--path=/var/www/html
 
-	# --- Crear usuario adicional ---
+# if [ ! -z "$WP_USER" ]; then comprueba si la variable WP_USER no está vacía
+# -z significa "cadena vacía"
+# si no existe un usuario definido, no se crea ningún usuario extra
+
+# wp user create crea un nuevo usuario en WordPress
+# "$WP_USER" es el nombre del usuario
+# "$WP_USER_EMAIL" es el correo del usuario
+# --user_pass define la contraseña del usuario
+# --role=subscriber asigna el rol más básico (solo lectura)
+# se usa subscriber por seguridad y porque no necesita privilegios
+# --allow-root permite ejecutar el comando como root en Docker
 	if [ ! -z "$WP_USER" ]; then
 		echo "[+] Creando usuario secundario..."
 		wp user create "$WP_USER" "$WP_USER_EMAIL" \
@@ -93,12 +124,24 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 	# --- Ajustar permisos para directorios y archivos de la instalación de WordPress ---
 	# En uploads permito escritura al grupo porque ahí es donde el FTP subirá archivos
 	chown -R www-data:www-data /var/www/html
+	# www-data es el usuario con el que corre PHP-FPM.
 	chmod -R 755 /var/www/html
+	# Permisos estándar: lectura y ejecución.
 	chmod -R 775 "/var/www/html/wp-content/uploads"
+	# uploads necesita permisos de escritura para subir archivos.
 
 	# --- Arrancar PHP-FPM en primer plano ---
 	echo "[+] Arrancando PHP-FPM..."
 	exec php-fpm7.4 -F
+	# exec reemplaza el proceso actual por PHP-FPM.
+	# -F significa que se ejecuta en primer plano.
+	# En Docker, el proceso principal NO debe ir en segundo plano.
 fi
 echo "[+] WordPress ya instalado. Saltando instalación..."
-exec php-fpm7.4 -F  # Arranca PHP-FPM en primer plano
+exec php-fpm7.4 -F # Arrancamos PHP-FPM directamente sin reinstalar nada.
+
+
+# “Todos los comandos wp se usan para automatizar la instalación de WordPress dentro de Docker,
+# ya que no se puede usar el instalador web.
+# Las opciones como --allow-root y --path son necesarias por la forma en la que Docker ejecuta los contenedores
+# y por la estructura estándar de servidores web.”

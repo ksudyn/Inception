@@ -128,6 +128,13 @@ volumes:
 networks:
   inception:
     driver: bridge
+# Qué es una red bridge en Docker?
+
+# Imagina que docker crea una habitación privada
+# Todos los contenedores están dentro de esa habitación
+# Pueden hablar entre ellos por su nombre
+# Eso es una red bridge
+
 
 # ==========================
 # Docker secrets
