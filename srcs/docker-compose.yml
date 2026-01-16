@@ -122,24 +122,21 @@ volumes:
   wordpress_data:
     driver: local
 
-# ==========================
-# Red interna del proyecto
-# ==========================
 networks:
   inception:
     driver: bridge
-# Qué es una red bridge en Docker?
 
-# Imagina que docker crea una habitación privada
-# Todos los contenedores están dentro de esa habitación
-# Pueden hablar entre ellos por su nombre
-# Eso es una red bridge
+# Aqui le estamos diciendo que la red Inception( que es el nombre que le pusimos y podiamos cambiar),
+# para network va a ser de tipo bridge, que se llama usando driver.
+# Ese tipo de red te permite que los contenerdores que tengan la network inception se puedan comunicar entre ellos,
+# pero que no se ven desde fuera.
 
+# Pero su comunicación y su dependencia y sincronización se maneja en los sripts (.sh).
 
-# ==========================
-# Docker secrets
-# Contraseñas y certificados
-# ==========================
+# MariaDB arranca, se inicializa, se queda escuchando, no espera a nadie.
+# Wordpress no hace nada hasta que MariaDB responda
+# Nginx espera a que wordpress tenga los archivos y uego arranca.
+
 secrets:
   # Contraseña root de MariaDB
   db_root_password:
