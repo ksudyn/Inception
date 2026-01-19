@@ -5,8 +5,9 @@ server
 
     # Escucha conexiones HTTPS en IPv6
     listen [::]:443 ssl;
+    #Esto te permite ampliar el abanico de posiblades de direcciones IP 
 
-    # Nombre del dominio del servidor
+    # Nombre del dominio del servidor (login.42.fr)
     # ${DOMAIN_NAME} se sustituye en tiempo de arranque por envsubst
     server_name ${DOMAIN_NAME};
 
@@ -15,12 +16,14 @@ server
     ssl_certificate     /run/secrets/nginx_crt;
     ssl_certificate_key /run/secrets/nginx_key;
 
-    # Protocolos TLS permitidos
+    # Protocolos TLS permitidos, que nos limita a un rango permitido y seguro
+    # TLS es el sistema que da seguridad a una página web.
+    # Es lo que hace que una web sea HTTPS (la “S” es de Security).
+    # Sin TLS, la información viaja sin protección y cualquiera podría ver datos sensibles como contraseñas, formularios o cookies.
     # TLSv1.0 y TLSv1.1 están obsoletos e inseguros
     ssl_protocols TLSv1.2 TLSv1.3;
 
-    # El servidor decide qué cifrado usar, no el cliente
-    # Mejora la seguridad
+    # El servidor decide qué cifrado usar, no el cliente, esto mejora la seguridad
     ssl_prefer_server_ciphers on;
 
     # Lista de cifrados permitidos:
@@ -37,7 +40,8 @@ server
     # Directorio raíz donde están los archivos de WordPress
     root /var/www/html;
 
-    # Archivos índice por defecto
+    # index → Archivos que NGINX buscará si el usuario no indica un archivo específico.
+    # Cuando alguien visita la web, NGINX sabe dónde buscar los archivos y cuál mostrar primero
     index index.php index.html index.htm;
 
     # Location define qué hacer con una petición según la URL solicitada
@@ -56,10 +60,10 @@ server
 
     location ~* \.(jpg|jpeg|png|gif|ico|css|js|svg|woff2?)$     # regex (NO sensible a mayúsculas)
     {
-        # ~* -> expresión regular sin distinguir mayúsculas/minúsculas
-        # \. -> el punto antes de la extensión
-        # (...) -> lista de extensiones permitidas
-        # $ -> final del nombre del archivo
+        # ~*        -> expresión regular sin distinguir mayúsculas/minúsculas
+        # \.        -> el punto antes de la extensión
+        # (...)     -> lista de extensiones permitidas
+        # $         -> final del nombre del archivo
 
         # No registrar accesos para estos archivos
         # Reduce logs y mejora rendimiento
@@ -78,8 +82,6 @@ server
         # Responde con código 200 y el texto "ok"
         # Docker usa esto para comprobar que NGINX sigue vivo
         return 200 "ok\n";
-
-        # Tipo de contenido de la respuesta
         add_header Content-Type text/plain;
     }
 
