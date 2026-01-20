@@ -1,5 +1,3 @@
-version: "3.8" # 3.8 es estable y compatible con Docker moderno
-
 # Definición de servicios
 # Cada servicio = 1 contenedor
 services:
@@ -20,6 +18,10 @@ services:
     env_file:
       - .env
 
+    environment:
+          WPDB_USER_PASSWORD_FILE: /run/secrets/db_user_password
+          WPDB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+          MDB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
     # Docker secrets
     secrets:
       - db_root_password
@@ -56,12 +58,19 @@ services:
     env_file:
       - .env
 
+    environment:
+      WPDB_USER_PASSWORD_FILE: /run/secrets/db_user_password
+      WPDB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      WP_ADMIN_PASSWORD_FILE: /run/secrets/wp_admin_password
+      WP_USER_PASSWORD_FILE: /run/secrets/wp_user_password
+
     # Secrets necesarios para conectar con MariaDB
     # y crear el usuario admin de WordPress
     secrets:
       - db_user_password
       - db_root_password
       - wp_admin_password
+      - wp_user_password
 
     # Volumen compartido con NGINX
     # Contiene WordPress, uploads, plugins, temas, etc.
@@ -150,6 +159,9 @@ secrets:
   wp_admin_password:
     file: ./secrets/wp_admin_password.txt
 
+  # Contraseña del usuario de WordPress
+  wp_user_password:
+    file: ./secrets/wp_user_password.txt
   # Certificado TLS de NGINX
   nginx_crt:
     file: ./secrets/nginx.crt

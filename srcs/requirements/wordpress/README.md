@@ -55,7 +55,7 @@ srcs/requirements/wordpress/
 
 ## Dockerfile
 
-- Usa Debian Bullseye
+- Usa Debian bookworm
 - Instala PHP-FPM y extensiones necesarias
 - Instala WP-CLI
 - Copia configuraciones personalizadas

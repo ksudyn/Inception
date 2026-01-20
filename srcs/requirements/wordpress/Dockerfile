@@ -1,5 +1,5 @@
 # Penúltima versión estable de Debian
-FROM debian:bullseye
+FROM debian:bookworm
 
 # Evitar preguntas interactivas
 ENV DEBIAN_FRONTEND=noninteractive

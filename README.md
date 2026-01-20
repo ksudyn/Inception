@@ -131,7 +131,7 @@ red interna de Docker definida en el proyecto.
 
 * **Dockerfile**
 
-  * Imagen basada en **Debian Bullseye** (penúltima versión estable), cumpliendo los requisitos del subject.
+  * Imagen basada en **Debian bookworm** (penúltima versión estable), cumpliendo los requisitos del subject.
   * Instala únicamente `mariadb-server` y dependencias mínimas para reducir el tamaño de la imagen.
   * Copia el archivo de configuración `my.cnf` dentro del contenedor.
   * Copia el script `mariadb_entrypoint.sh`, que se encarga de la inicialización.
@@ -196,7 +196,7 @@ NGINX se encarga de:
 
 * **Dockerfile**
 
-  * Imagen basada en **Debian Bullseye** (penúltima versión estable).
+  * Imagen basada en **Debian bookworm** (penúltima versión estable).
   * Instala únicamente:
     * `nginx`
     * `openssl` (para certificados TLS)
@@ -306,7 +306,7 @@ WordPress se comunica con:
 
 * **Dockerfile**
 
-  * Imagen basada en **Debian Bullseye** (penúltima versión estable).
+  * Imagen basada en **Debian bookworm** (penúltima versión estable).
   * Instala únicamente los paquetes necesarios:
     * `php-fpm` para ejecutar PHP.
     * Extensiones PHP requeridas por WordPress (mysqli, curl, gd, xml, zip, etc.).

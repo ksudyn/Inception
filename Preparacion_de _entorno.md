@@ -19,7 +19,7 @@ Las distribuciones recomendadas son:
 En este proyecto se utiliza:
 
 ```
-Debian 11 (Bullseye)
+Debian 11 (bookworm)
 ```
 
 **Motivos de la elección**:
@@ -186,12 +186,12 @@ El subject exige que las imágenes se construyan a partir de la **penúltima ver
 Ejemplo Debian:
 
 * Stable: Debian 12 (Bookworm)
-* Penúltima estable: **Debian 11 (Bullseye)**
+* Penúltima estable: **Debian 11 (bookworm)**
 
 Por eso se utiliza:
 
 ```Dockerfile
-FROM debian:bullseye
+FROM debian:bookworm
 ```
 
 Nunca se debe usar `latest`.
@@ -211,3 +211,8 @@ Nunca se debe usar `latest`.
 
 Esta Informacion cubre **exclusivamente** la preparación del entorno.
 La estructura del proyecto y los servicios se documentan en el ` README ` principal.
+
+debian bookwork en google
+entramos y le damos a installation information
+bookwork y installation information y en la primera amd64
+ 

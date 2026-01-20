@@ -46,10 +46,10 @@ El `Dockerfile` define **cómo se construye la imagen** del contenedor MariaDB.
 ### Dockerfile explicado
 
 ```dockerfile
-FROM debian:bullseye
+FROM debian:bookworm
 ```
 
-* Usa Debian Bullseye, que es la penúltima versión estable exigida.
+* Usa Debian bookworm, que es la penúltima versión estable exigida.
 
 ```dockerfile
 RUN apt-get update -y && \
@@ -277,7 +277,7 @@ exec mysqld
 ## Para defensa
 
 * MariaDB corre en su propio contenedor
-* Usa Debian Bullseye
+* Usa Debian bookworm
 * No hay contraseñas en el código
 * Los datos son persistentes
 * La inicialización ocurre solo una vez

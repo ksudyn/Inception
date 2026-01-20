@@ -1,5 +1,5 @@
-# Usamos Debian Bullseye (penúltima versión estable)
-FROM debian:bullseye
+# Usamos Debian bookworm (penúltima versión estable)
+FROM debian:bookworm
 
 # Evitar preguntas interactivas al instalar paquetes
 ENV DEBIAN_FRONTEND=noninteractive
@@ -60,3 +60,8 @@ HEALTHCHECK --interval=10s --timeout=5s --start-period=20s --retries=3 \
 # Da permisos de ejecución a los scripts.
 # Expone solo el puerto 443 para HTTPS.
 # Usa un ENTRYPOINT que asegura que los certificados se generen y NGINX se inicie correctamente.
+
+# “El HEALTHCHECK permite a Docker verificar periódicamente que NGINX sigue funcionando correctamente por HTTPS.
+# Se comprueba una ruta ligera (/healthz) sin depender de WordPress ni de la base de datos,
+# y se ignora el certificado autofirmado. Si falla varias veces seguidas,
+# Docker marca el contenedor como no saludable.”

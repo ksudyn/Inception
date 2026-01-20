@@ -1,5 +1,5 @@
-# Usamos Debian Bullseye (penúltima versión estable), nO es un contenedor, es una imagen base.
-FROM debian:bullseye
+# Usamos Debian bookworm (penúltima versión estable), nO es un contenedor, es una imagen base.
+FROM debian:bookworm
 # Se usa Debian y no Alpine porque Alpine es más complicado con MariaDB
 # y Debian es más estable y claro.
 

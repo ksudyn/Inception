@@ -21,7 +21,7 @@ WPDB_ROOT_PASS=$(cat "${WPDB_ROOT_PASSWORD_FILE}")
 WP_ADMIN_PASS=$(cat "${WP_ADMIN_PASSWORD_FILE}")
 # Contraseña del usuario administrador de WordPress.
 
-
+WP_USER_PASS=$(cat "$WP_USER_PASSWORD_FILE")
 
 # wait_for_db es solo el nombre de una función que contiene ese bucle
 # dentro until es como un bucle que dice que haz esto hata que funciones, en este caso hasta que de ok

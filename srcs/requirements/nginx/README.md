@@ -44,7 +44,7 @@ srcs/requirements/nginx/
 
 * **Dockerfile**
 
-  * Imagen basada en **Debian Bullseye** (penúltima versión estable).
+  * Imagen basada en **Debian bookworm** (penúltima versión estable).
   * No usar imágenes oficiales de NGINX.
   * Instalar solo paquetes necesarios para servidor web y TLS:
     * `nginx`  
@@ -168,7 +168,7 @@ Esto permite:
 ## Resumen para defensa
 
 * NGINX corre en su propio contenedor.  
-* Usa Debian Bullseye.  
+* Usa Debian bookworm.  
 * No hay contraseñas en el código.  
 * Solo expone el puerto 443.  
 * Gestiona certificados mediante Docker secrets.  
